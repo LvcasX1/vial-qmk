@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 
-#define CMD_ALT_BSPC MT(MOD_LALT | MOD_LGUI, KC_BSPC)
-
 enum custom_keycodes {
     CMD_ALT_BSPC = QK_USER_0
 };
