@@ -52,8 +52,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case CMD_ALT_BSPC:
             if (record->event.pressed) {
-                cmd_alt_timer = timer_read();
-                register_mods(MOD_LALT | MOD_LGUI);
+                // cmd_alt_timer = timer_read();
+                // register_mods(MOD_LALT | MOD_LGUI);
+                tap_code(KC_A);
             } else {
                 unregister_mods(MOD_LALT | MOD_LGUI);
                 if (timer_elapsed(cmd_alt_timer) < TAPPING_TERM) {
