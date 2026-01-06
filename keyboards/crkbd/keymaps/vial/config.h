@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_TERM 200
 #define QMK_KEYS_PER_SCAN 4
 #define OLED_TIMEOUT 30000
+#define VIAL_TAP_DANCE_ENTRIES 0
 
 //#define USE_MATRIX_I2C
 #ifdef KEYBOARD_crkbd_rev1_legacy

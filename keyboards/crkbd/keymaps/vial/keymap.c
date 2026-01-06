@@ -20,6 +20,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define CMD_ALT_BSPC MT(MOD_LALT | MOD_LGUI, KC_BSPC)
 
+enum custom_keycodes {
+    CMD_ALT_BSPC = QK_USER_0
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CMD_ALT_BSPC:
+            if (record->tap.count && record->event.pressed) {
+                // Tap: Backspace
+                tap_code(KC_BSPC);
+                return false;
+            } else if (record->event.pressed) {
+                // Hold: Alt + Cmd
+                register_mods(MOD_LALT | MOD_LGUI);
+            } else {
+                // Release
+                unregister_mods(MOD_LALT | MOD_LGUI);
+            }
+            return false;
+    }
+    return true;
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
