@@ -38,6 +38,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ========== CUSTOM KEYCODE (FUERA del bloque OLED) ==========
 static uint16_t cmd_alt_timer;
 
+#ifdef OLED_ENABLE
+void set_keylog(uint16_t keycode, keyrecord_t *record);  // Forward declaration
+#endif
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef OLED_ENABLE
     if (record->event.pressed) {
