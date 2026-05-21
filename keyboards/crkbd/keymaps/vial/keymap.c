@@ -39,7 +39,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #include <stdio.h>
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    if (!is_keyboard_master()) {
+    if (!is_keyboard_left()) {
         return OLED_ROTATION_180;
     }
     return rotation;
@@ -176,7 +176,7 @@ void oled_render_logo(void) {
 }
 
 bool oled_task_user(void) {
-    if (is_keyboard_master()) {
+    if (is_keyboard_left()) {
         oled_render_master_logo();
     } else {
         oled_render_logo();
