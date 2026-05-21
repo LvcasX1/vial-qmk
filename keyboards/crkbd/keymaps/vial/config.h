@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define USE_SERIAL_PD2
 #ifdef RGBLIGHT_ENABLE
 #    undef RGBLIGHT_LED_COUNT
-#    define RGBLIGHT_ANIMATIONS
+//#    define RGBLIGHT_ANIMATIONS
 #    define RGBLIGHT_DEFAULT_MODE RGBLIGHT_MODE_STATIC_LIGHT
 #    define RGBLIGHT_DEFAULT_HUE 0
 #    define RGBLIGHT_DEFAULT_SAT 255
