@@ -178,7 +178,11 @@ void oled_render_logo(void) {
 bool oled_task_user(void) {
     static bool drawn = false;
     if (!drawn) {
-        oled_render_master_logo();
+        if (is_keyboard_left()) {
+            oled_render_master_logo();
+        } else {
+            oled_render_logo();
+        }
         drawn = true;
     }
     return false;
