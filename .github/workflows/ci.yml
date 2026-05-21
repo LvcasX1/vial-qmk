@@ -16,25 +16,28 @@ jobs:
       - name: Configure git safe directory
         run: git config --global --add safe.directory $(pwd)
 
+      - name: Prepare output dir
+        run: mkdir -p output
+
       - name: Build LEFT firmware
         run: |
-          qmk clean -a
+          rm -rf .build
           qmk compile -kb crkbd -km vial -e "EXTRAFLAGS=-DINIT_EE_HANDS_LEFT"
-          mv crkbd_rev1_vial.hex crkbd_vial_left.hex
+          mv crkbd_rev1_vial.hex output/crkbd_vial_left.hex
 
       - name: Build RIGHT firmware
         run: |
-          qmk clean -a
+          rm -rf .build
           qmk compile -kb crkbd -km vial -e "EXTRAFLAGS=-DINIT_EE_HANDS_RIGHT"
-          mv crkbd_rev1_vial.hex crkbd_vial_right.hex
+          mv crkbd_rev1_vial.hex output/crkbd_vial_right.hex
 
       - name: List artifacts
-        run: ls -la *.hex
+        run: ls -la output/
 
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
           name: crkbd-vial-firmware
           path: |
-            crkbd_vial_left.hex
-            crkbd_vial_right.hex
+            output/crkbd_vial_left.hex
+            output/crkbd_vial_right.hex
