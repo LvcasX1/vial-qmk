@@ -16,20 +16,25 @@ jobs:
       - name: Configure git safe directory
         run: git config --global --add safe.directory $(pwd)
 
-      - name: Build firmware
-        run: qmk compile -kb crkbd -km vial
-
-      - name: Stage handedness EEPROM files
+      - name: Build LEFT firmware
         run: |
-          cp quantum/split_common/eeprom-lefthand.eep .
-          cp quantum/split_common/eeprom-righthand.eep .
-          ls -la *.hex *.eep
+          qmk clean
+          EXTRAFLAGS="-DINIT_EE_HANDS_LEFT" qmk compile -kb crkbd -km vial
+          mv crkbd_rev1_vial.hex crkbd_vial_left.hex
+
+      - name: Build RIGHT firmware
+        run: |
+          qmk clean
+          EXTRAFLAGS="-DINIT_EE_HANDS_RIGHT" qmk compile -kb crkbd -km vial
+          mv crkbd_rev1_vial.hex crkbd_vial_right.hex
+
+      - name: List artifacts
+        run: ls -la *.hex
 
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
           name: crkbd-vial-firmware
           path: |
-            *.hex
-            *.eep
-            *.uf2
+            crkbd_vial_left.hex
+            crkbd_vial_right.hex
