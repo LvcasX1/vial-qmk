@@ -3,22 +3,9 @@ Copyright 2019 @foostan
 Copyright 2020 Drashna Jaelre <@drashna>
 */
 #include QMK_KEYBOARD_H
-#include "eeconfig.h"
 
 // Mod-Tap: Tap=Backspace, Hold=Alt+Cmd (0x6C2A)
 #define CMD_ALT_BSPC MT(MOD_LALT | MOD_LGUI, KC_BSPC)
-
-void keyboard_pre_init_user(void) {
-#if defined(INIT_EE_HANDS_LEFT)
-    if (!eeconfig_read_handedness()) {
-        eeconfig_update_handedness(true);
-    }
-#elif defined(INIT_EE_HANDS_RIGHT)
-    if (eeconfig_read_handedness()) {
-        eeconfig_update_handedness(false);
-    }
-#endif
-}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_split_3x6_3(
