@@ -19,10 +19,26 @@ jobs:
       - name: Build firmware
         run: qmk compile -kb crkbd -km vial
 
+      - name: Install srecord
+        run: apt-get update && apt-get install -y srecord
+
+      - name: Merge handedness EEPROM into hex
+        run: |
+          HEX=$(ls *.hex | head -n1)
+          echo "Base firmware: $HEX"
+          srec_cat "$HEX" -intel \
+            quantum/split_common/eeprom-lefthand.eep -intel -offset 0x810000 \
+            -o crkbd_vial_left.hex -intel
+          srec_cat "$HEX" -intel \
+            quantum/split_common/eeprom-righthand.eep -intel -offset 0x810000 \
+            -o crkbd_vial_right.hex -intel
+          ls -la *.hex
+
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
           name: crkbd-vial-firmware
           path: |
-            *.hex
+            crkbd_vial_left.hex
+            crkbd_vial_right.hex
             *.uf2
