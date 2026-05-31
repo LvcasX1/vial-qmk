@@ -14,3 +14,5 @@ QMK_SETTINGS        = no
 CAPS_WORD_ENABLE = no
 LAYER_LOCK_ENABLE = no
 REPEAT_KEY_ENABLE = no
+
+LTO_ENABLE = yes   # link-time optimization: shrinks firmware, more headroom on atmega32u4

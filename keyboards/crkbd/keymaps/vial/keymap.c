@@ -36,67 +36,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 // ========== OLED ==========
 #ifdef OLED_ENABLE
-#include <stdio.h>
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (!is_keyboard_left()) {
         return OLED_ROTATION_180;
     }
     return rotation;
-}
-
-#define L_BASE 0
-#define L_LOWER 2
-#define L_RAISE 4
-#define L_ADJUST 8
-
-void oled_render_layer_state(void) {
-    oled_write_P(PSTR("Layer: "), false);
-    switch (layer_state) {
-        case L_BASE:
-            oled_write_ln_P(PSTR("Default"), false);
-            break;
-        case L_LOWER:
-            oled_write_ln_P(PSTR("Lower"), false);
-            break;
-        case L_RAISE:
-            oled_write_ln_P(PSTR("Raise"), false);
-            break;
-        case L_ADJUST:
-        case L_ADJUST|L_LOWER:
-        case L_ADJUST|L_RAISE:
-        case L_ADJUST|L_LOWER|L_RAISE:
-            oled_write_ln_P(PSTR("Adjust"), false);
-            break;
-    }
-}
-
-char keylog_str[24] = {};
-
-const char code_to_name[60] = {
-    ' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f',
-    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-    'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\',
-    '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '};
-
-void set_keylog(uint16_t keycode, keyrecord_t *record) {
-    char name = ' ';
-    if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) ||
-        (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX)) {
-        keycode = keycode & 0xFF;
-    }
-    if (keycode < 60) {
-        name = code_to_name[keycode];
-    }
-    snprintf(keylog_str, sizeof(keylog_str), "%dx%d, k%2d : %c",
-             record->event.key.row, record->event.key.col,
-             keycode, name);
-}
-
-void oled_render_keylog(void) {
-    oled_write(keylog_str, false);
 }
 
 void oled_render_master_logo(void) {
@@ -176,22 +121,22 @@ void oled_render_logo(void) {
 }
 
 bool oled_task_user(void) {
-    static bool drawn = false;
-    if (!drawn) {
+    // Redraw the logo on a slow throttle (~1s) instead of drawing once.
+    // Draw-once meant a single corrupted frame stayed garbled forever; a
+    // periodic redraw lets a bad frame self-heal and repaints the logo
+    // after the OLED wakes from OLED_TIMEOUT. 1 Hz keeps slave I2C/serial
+    // contention low, which is what made continuous redraw corrupt before.
+    static uint16_t last_draw = 0;
+    static bool     first     = true;
+    if (first || timer_elapsed(last_draw) > 1000) {
+        first     = false;
+        last_draw = timer_read();
         if (is_keyboard_left()) {
             oled_render_master_logo();
         } else {
             oled_render_logo();
         }
-        drawn = true;
     }
     return false;
-}
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (record->event.pressed) {
-        set_keylog(keycode, record);
-    }
-    return true;
 }
 #endif // OLED_ENABLE
